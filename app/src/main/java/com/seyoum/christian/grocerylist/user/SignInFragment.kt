@@ -9,8 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.room.Room
-import com.seyoum.christian.grocerylist.GroceryListActivity
+import com.seyoum.christian.grocerylist.groceryList.GroceryListActivity
 import com.seyoum.christian.grocerylist.MainActivity
 import com.seyoum.christian.grocerylist.R
 import com.seyoum.christian.grocerylist.user.interfaces.IUserControl

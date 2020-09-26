@@ -12,4 +12,5 @@
     <string name="firstname">FirstName</string>
     <string name="lastname">LastName</string>
     <string name="email">Email</string>
+    <string name="title">Title</string>
 </resources>
