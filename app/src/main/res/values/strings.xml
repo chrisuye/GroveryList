@@ -13,4 +13,6 @@
     <string name="lastname">LastName</string>
     <string name="email">Email</string>
     <string name="title">Title</string>
+    <string name="ingredient">ingredient</string>
+    <string name="todo">TODO</string>
 </resources>
