@@ -1,37 +1,90 @@
 package com.seyoum.christian.grocerylist.ingredientList
 
+import android.app.AlertDialog
+import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.seyoum.christian.grocerylist.R
-import com.seyoum.christian.grocerylist.groceryList.interfaces.IGroceryListControl
-import com.seyoum.christian.grocerylist.ingredientList.network.model.IngredientList
+import com.seyoum.christian.grocerylist.ingredientList.interfaces.IIngredientListControl
 import com.seyoum.christian.grocerylist.ingredientList.network.model.NutritionList
+import com.seyoum.christian.grocerylist.ingredientList.network.model.ViewModel
 import kotlinx.android.synthetic.main.list_ingredient.view.*
-import kotlinx.android.synthetic.main.list_title.view.*
 
-class IngredientListAdapter(private val ingredientList: List<NutritionList>): RecyclerView.Adapter<GroceryListHolder>(){
+
+class IngredientListAdapter(
+    private val iIngredientListControl: IIngredientListControl
+):
+    RecyclerView.Adapter<GroceryListHolder>() {
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroceryListHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_ingredient, parent, false)
-        return GroceryListHolder(view)
+        val view = LayoutInflater.from(parent.context).inflate(
+            R.layout.list_ingredient,
+            parent,
+            false
+        )
+        val viewHolder = GroceryListHolder(view)
+
+        view.infoIngredientBtn.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            val ingredient = iIngredientListControl.getList()[position]
+            val dialogBuilder = AlertDialog.Builder(view.context)
+
+
+            dialogBuilder.setMessage(makeString(ingredient.nutritionList))
+
+                .setCancelable(true)
+
+
+            val alert = dialogBuilder.create()
+
+            alert.setTitle(ingredient.nutritionList.name)
+
+            alert.show()
+        }
+
+        view.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            iIngredientListControl.setSelected(position, !iIngredientListControl.getList()[position].selected)
+            notifyDataSetChanged()
+        }
+
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: GroceryListHolder, position: Int) {
-        ingredientList[position].name?.let { holder.bindItem(it) }
+        holder.bindItem(iIngredientListControl.getList()[position])
     }
 
     override fun getItemCount(): Int {
-        return ingredientList.size
+        return iIngredientListControl.getSize()
+    }
+
+    private fun makeString(nutritionList: NutritionList): String {
+        return "energy: ${nutritionList.energy}\n"+
+        "protein: ${nutritionList.protein}\n"+
+        "carbohydrates: ${nutritionList.carbohydrates}\n"+
+        "carbohydrates_sugar: ${nutritionList.carbohydrates_sugar}\n"+
+        "fat: ${nutritionList.fat}\n"+
+        "fat_saturated: ${nutritionList.fat_saturated}\n"+
+        "fibres: ${nutritionList.fibres}\n"+
+        "sodium: ${nutritionList.sodium}\n"
     }
 }
 
 class GroceryListHolder(view: View): RecyclerView.ViewHolder(view) {
-
-    fun bindItem(ingredient: String){
-        itemView.ingredient.text = ingredient
+    fun bindItem(ingredient: ViewModel){
+        itemView.ingredient.text = ingredient.nutritionList.name
+        if (ingredient.selected) {
+            itemView.ingredientCard.setBackgroundColor(Color.LTGRAY)
+        } else {
+            itemView.ingredientCard.setBackgroundColor(Color.WHITE)
+        }
     }
 
 }

@@ -1,10 +1,11 @@
 package com.seyoum.christian.grocerylist
 
+import android.app.SearchManager
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log.d
-import androidx.room.Room
-import com.seyoum.christian.grocerylist.user.CreateAccountFragment
+import android.view.Menu
+import androidx.appcompat.widget.SearchView
 import com.seyoum.christian.grocerylist.user.SignInFragment
 import com.seyoum.christian.grocerylist.user.UserRepo
 import com.seyoum.christian.grocerylist.user.data.UserDatabase

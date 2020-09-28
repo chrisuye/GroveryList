@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [GroceryListEntity::class], version = 1)
+@Database(entities = [GroceryListEntity::class], version = 2)
 abstract class GroceryListDatabase : RoomDatabase() {
     abstract fun groceryListDao(): GroceryListDao
 
@@ -18,7 +18,7 @@ abstract class GroceryListDatabase : RoomDatabase() {
             instance ?: buildDatabase(context).also { instance = it}
         }
 
-        private fun buildDatabase(context: Context): GroceryListDatabase{
+        private fun buildDatabase(context: Context): GroceryListDatabase {
             return Room.databaseBuilder(
                 context,
                 GroceryListDatabase::class.java, "grocery-list.db").fallbackToDestructiveMigration()

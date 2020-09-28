@@ -1,6 +1,5 @@
 package com.seyoum.christian.grocerylist.ingredientList.network.model
 
-import com.google.gson.annotations.SerializedName
 
 class IngredientList(val next: String?, val results: List<NutritionList>)
 

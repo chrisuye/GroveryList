@@ -2,16 +2,17 @@ package com.seyoum.christian.grocerylist.user
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.seyoum.christian.grocerylist.groceryList.GroceryListActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.seyoum.christian.grocerylist.MainActivity
 import com.seyoum.christian.grocerylist.R
+import com.seyoum.christian.grocerylist.groceryList.GroceryListActivity
 import com.seyoum.christian.grocerylist.user.interfaces.IUserControl
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -26,7 +27,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [SignIn.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SignInFragment (val userControl: IUserControl) : Fragment() {
+class SignInFragment(val userControl: IUserControl) : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -67,6 +68,10 @@ class SignInFragment (val userControl: IUserControl) : Fragment() {
             password = view.findViewById(R.id.passwordIn)
             GlobalScope.launch {
                 if (userControl.getUser(userName.text.toString(), password.text.toString())) {
+                    val fm: FragmentManager = activity!!.supportFragmentManager
+                    for (i in 0 until fm.backStackEntryCount) {
+                        fm.popBackStack()
+                    }
                     val intent = Intent(activity, GroceryListActivity::class.java)
                     startActivity(intent)
                 } else {
