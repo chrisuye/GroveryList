@@ -66,14 +66,14 @@ class IngredientListAdapter(
     }
 
     private fun makeString(nutritionList: NutritionList): String {
-        return "energy: ${nutritionList.energy}\n"+
-        "protein: ${nutritionList.protein}\n"+
-        "carbohydrates: ${nutritionList.carbohydrates}\n"+
-        "carbohydrates_sugar: ${nutritionList.carbohydrates_sugar}\n"+
-        "fat: ${nutritionList.fat}\n"+
-        "fat_saturated: ${nutritionList.fat_saturated}\n"+
-        "fibres: ${nutritionList.fibres}\n"+
-        "sodium: ${nutritionList.sodium}\n"
+        return  "Energy: ${nutritionList.energy}\n"+
+                "Protein: ${nutritionList.protein}\n"+
+                "Carbohydrates: ${nutritionList.carbohydrates}\n"+
+                "Carbohydrates_sugar: ${nutritionList.carbohydrates_sugar}\n"+
+                "Fat: ${nutritionList.fat}\n"+
+                "Fat_saturated: ${nutritionList.fat_saturated}\n"+
+                "Fibres: ${nutritionList.fibres}\n"+
+                "Sodium: ${nutritionList.sodium}\n"
     }
 }
 

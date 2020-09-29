@@ -14,6 +14,7 @@
     <string name="email">Email</string>
     <string name="title">Title</string>
     <string name="ingredient">ingredient</string>
+    <string name="search">Search…</string>
     <string name="todo">TODO</string>
-    <string name="search">Search...</string>
+    <string name="_0">0</string>
 </resources>

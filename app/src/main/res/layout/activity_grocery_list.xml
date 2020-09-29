@@ -8,8 +8,14 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/groceryRecyclerView"
-        android:layout_width="409dp"
-        android:layout_height="729dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,10 +28,22 @@
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="32dp"
+        android:background="#00FFFFFF"
         android:clickable="true"
-        android:src="@drawable/ic_baseline_add_circle_24"
+        android:focusable="true"
+        app:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:focusable="true" />
+        app:srcCompat="@drawable/ic_baseline_add_circle_24" />
+
+    <ProgressBar
+        android:id="@+id/groceryListProgress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="79dp"
+        android:layout_height="68dp"
+        app:layout_constraintBottom_toBottomOf="@+id/groceryRecyclerView"
+        app:layout_constraintEnd_toEndOf="@+id/groceryRecyclerView"
+        app:layout_constraintStart_toStartOf="@+id/groceryRecyclerView"
+        app:layout_constraintTop_toTopOf="@+id/groceryRecyclerView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

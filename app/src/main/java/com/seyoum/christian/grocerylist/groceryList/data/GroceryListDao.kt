@@ -8,7 +8,7 @@ interface GroceryListDao {
     fun getAll(userName: String): List<GroceryListEntity>
 
     @Insert
-    fun insertAll(vararg groceryListEntity: GroceryListEntity)
+    suspend fun insertAll(vararg groceryListEntity: GroceryListEntity)
 
     @Delete
     fun delete(groceryListEntity: GroceryListEntity)

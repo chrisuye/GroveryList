@@ -50,6 +50,26 @@ class IngredientListRepo: IIngredientListRepo{
         ingredientList.addAll(fullIngredientList)
     }
 
+    override fun getSelectedSize(): Int {
+        return selectedIngredientList.size
+    }
+
+    override fun clearSelected() {
+        selectedIngredientList.clear()
+
+        for (ingredient in fullIngredientList) {
+            ingredient.selected = false
+        }
+
+        for (ingredient in ingredientList) {
+            ingredient.selected = false
+        }
+    }
+
+    override fun getSelectedList(): MutableList<NutritionList> {
+        return selectedIngredientList
+    }
+
     private fun addToList(viewModel: ViewModel) {
         selectedIngredientList.add(viewModel.nutritionList)
     }

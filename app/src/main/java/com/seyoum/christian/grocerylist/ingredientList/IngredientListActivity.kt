@@ -1,28 +1,37 @@
 package com.seyoum.christian.grocerylist.ingredientList
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.seyoum.christian.grocerylist.R
 import com.seyoum.christian.grocerylist.ingredientList.interfaces.IIngredientListControl
 import com.seyoum.christian.grocerylist.ingredientList.network.model.IngredientList
+import com.seyoum.christian.grocerylist.ingredientList.network.model.NutritionList
 import com.seyoum.christian.grocerylist.ingredientList.network.model.ViewModel
 import kotlinx.android.synthetic.main.activity_ingredient_list.*
 import okhttp3.*
 import java.io.IOException
 
+
 class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
     private var count = 0
     private var next: String? = ""
     private val ingredientListRepo = IngredientListRepo()
+    private lateinit var title: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,32 +41,48 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
         val url = "https://wger.de/api/v2/ingredient/?format=json"
         fetchJson(url)
 
-        ingredientListRecycleView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+        inputTitle()
+        ingredientListRecycleView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
                 if (!ingredientListRecycleView.canScrollVertically(1)) {
                     if (next != null) {
                         runOnUiThread {
-                            bottomLayout.visibility = View.VISIBLE
+                            Toast.makeText(this@IngredientListActivity, "Loading...", Toast.LENGTH_LONG).show()
                             count = 0
-                            bottomProgress.visibility = View.VISIBLE
                             fetchMore(next!!)
                         }
                     }
-
-                } else {
-                    this@IngredientListActivity.bottomLayout.visibility = View.GONE
                 }
             }
         })
+
+        clearSavedBtn.setOnClickListener {
+            bottomLayout.visibility = View.GONE
+            ingredientListRepo.clearSelected()
+            ingredientListRecycleView.adapter?.notifyDataSetChanged()
+        }
+
+        saveBtn.setOnClickListener {
+            val selectedListString: ArrayList<String> = arrayListOf()
+            for (ingredient in ingredientListRepo.getSelectedList()) {
+                selectedListString.add(Gson().toJson(ingredient))
+            }
+            val selected = Gson().toJson(selectedListString)
+            val intent = Intent()
+            intent.putExtra(ADD_LIST_EXTRA_KEY, selected)
+            intent.putExtra(ADD_TITLE_EXTRA_KEY, title.text.toString())
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
     }
     private fun fetchJson(url: String) {
 
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
 
-        client.newCall(request).enqueue(object: Callback {
+        client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 println("fail")
             }
@@ -68,7 +93,7 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
                 val body = response.body()?.string()
 
                 val gson = GsonBuilder().create()
-                val feed = gson.fromJson(body, IngredientList :: class.java)
+                val feed = gson.fromJson(body, IngredientList::class.java)
                 for (ingredient in feed.results) {
                     ingredientListRepo.add(ViewModel(ingredient, false))
                 }
@@ -77,7 +102,8 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
                     next = feed.next.toString()
                     runOnUiThread {
                         progressBar.visibility = View.GONE
-                        ingredientListRecycleView.adapter = IngredientListAdapter(this@IngredientListActivity)
+                        ingredientListRecycleView.adapter =
+                            IngredientListAdapter(this@IngredientListActivity)
                     }
                 } else {
                     feed.next?.let { fetchJson(it) }
@@ -90,7 +116,7 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
 
-        client.newCall(request).enqueue(object: Callback {
+        client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 println("fail")
             }
@@ -101,7 +127,7 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
                 val body = response.body()?.string()
 
                 val gson = GsonBuilder().create()
-                val feed = gson.fromJson(body, IngredientList :: class.java)
+                val feed = gson.fromJson(body, IngredientList::class.java)
                 for (ingredient in feed.results) {
                     ingredientListRepo.add(ViewModel(ingredient, false))
                 }
@@ -109,8 +135,6 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
                 if (count == 20 || feed.next == null) {
                     next = feed.next.toString()
                     runOnUiThread {
-                        bottomLayout.visibility = View.GONE
-                        bottomProgress.visibility = View.GONE
                         ingredientListRecycleView.adapter?.notifyDataSetChanged()
                     }
                 } else {
@@ -132,18 +156,21 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 searchView.clearFocus()
-                searchView.setQuery("",false)
+                searchView.setQuery("", false)
                 item.collapseActionView()
-                Toast.makeText(this@IngredientListActivity,"looking for $query", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@IngredientListActivity,
+                    "looking for $query",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText!!.isNotEmpty()){
+                if (newText!!.isNotEmpty()) {
                     search(newText)
                     ingredientListRecycleView.adapter?.notifyDataSetChanged()
-                }
-                else{
+                } else {
                     reset()
                     ingredientListRecycleView.adapter?.notifyDataSetChanged()
                 }
@@ -168,6 +195,12 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
 
     override fun setSelected(position: Int, selected: Boolean) {
         ingredientListRepo.setSelected(position, selected)
+        if (ingredientListRepo.getSelectedSize() > 0) {
+            bottomLayout.visibility = View.VISIBLE
+            savedCountText.text = "${ingredientListRepo.getSelectedSize()} Selected"
+        } else {
+            bottomLayout.visibility = View.GONE
+        }
     }
 
     override fun search(search: String) {
@@ -176,6 +209,36 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
 
     override fun reset() {
         ingredientListRepo.reset()
+    }
+
+    private fun inputTitle() {
+        val view = LayoutInflater.from(this).inflate(R.layout.input_title, null)
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setView(view)
+        title = view.findViewById(R.id.titleInputText)
+        dialogBuilder
+            .setCancelable(false)
+            .setPositiveButton("Next") { _, _ ->
+
+                Toast.makeText(this, title.text.toString(), Toast.LENGTH_LONG).show()
+            }
+
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.cancel()
+                onBackPressed()
+            }
+
+
+        val alert = dialogBuilder.create()
+
+        alert.setTitle("Input Title")
+
+        alert.show()
+    }
+
+    companion object{
+        const val ADD_LIST_EXTRA_KEY = "ADD_LIST"
+        const val ADD_TITLE_EXTRA_KEY = "ADD_TiTLE"
     }
 
 //    private fun search(search: String) {
