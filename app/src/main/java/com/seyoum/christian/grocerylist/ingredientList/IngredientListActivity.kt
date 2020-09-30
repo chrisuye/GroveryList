@@ -20,7 +20,6 @@ import com.google.gson.GsonBuilder
 import com.seyoum.christian.grocerylist.R
 import com.seyoum.christian.grocerylist.ingredientList.interfaces.IIngredientListControl
 import com.seyoum.christian.grocerylist.ingredientList.network.model.IngredientList
-import com.seyoum.christian.grocerylist.ingredientList.network.model.NutritionList
 import com.seyoum.christian.grocerylist.ingredientList.network.model.ViewModel
 import kotlinx.android.synthetic.main.activity_ingredient_list.*
 import okhttp3.*

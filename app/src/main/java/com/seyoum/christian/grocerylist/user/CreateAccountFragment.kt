@@ -2,16 +2,16 @@ package com.seyoum.christian.grocerylist.user
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.seyoum.christian.grocerylist.groceryList.GroceryListActivity
+import androidx.fragment.app.Fragment
 import com.seyoum.christian.grocerylist.MainActivity
 import com.seyoum.christian.grocerylist.R
+import com.seyoum.christian.grocerylist.groceryList.GroceryListActivity
 import com.seyoum.christian.grocerylist.user.data.UserEntity
 import com.seyoum.christian.grocerylist.user.interfaces.IUserControl
 import kotlinx.coroutines.GlobalScope
@@ -65,11 +65,14 @@ class CreateAccountFragment(val userControl: IUserControl) : Fragment() {
                 firstName.text.toString(),
                 lastName.text.toString(),
                 email.text.toString(),
-                password.text.toString())
+                password.text.toString()
+            )
             GlobalScope.launch {
                 if (userControl.checkUser(userName.text.toString())) {
                     userControl.addUser(userEntity)
                     val intent = Intent(activity, GroceryListActivity::class.java)
+                    intent.putExtra(GroceryListActivity.USER, userName.text.toString())
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                 } else {
                     activity?.runOnUiThread {

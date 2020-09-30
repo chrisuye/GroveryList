@@ -6,4 +6,5 @@ interface IGroceryListControl {
     suspend fun getGroceryList(userName:String): List<GroceryListEntity>
     suspend fun addGroceryList(groceryListEntity: GroceryListEntity)
     fun showLoading(loading: Boolean)
+    fun launchListDetail(ingredients: String)
 }

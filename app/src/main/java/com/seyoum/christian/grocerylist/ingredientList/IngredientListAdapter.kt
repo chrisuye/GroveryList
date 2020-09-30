@@ -18,8 +18,7 @@ import kotlinx.android.synthetic.main.list_ingredient.view.*
 
 class IngredientListAdapter(
     private val iIngredientListControl: IIngredientListControl
-):
-    RecyclerView.Adapter<GroceryListHolder>() {
+): RecyclerView.Adapter<GroceryListHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroceryListHolder {

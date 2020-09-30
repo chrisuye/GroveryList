@@ -16,7 +16,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.lang.reflect.Type
 
-class GroceryListAdapter (private val groceryListControl: IGroceryListControl, private val count: Int): RecyclerView.Adapter<GroceryListHolder>(){
+class GroceryListAdapter (
+    private val groceryListControl: IGroceryListControl,
+    private val count: Int,
+    private val userName: String): RecyclerView.Adapter<GroceryListHolder>(){
 
     private var energy  = 0.0
     private var protein  = 0.0
@@ -28,17 +31,17 @@ class GroceryListAdapter (private val groceryListControl: IGroceryListControl, p
     private var sodium  = 0.0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroceryListHolder {
-        val groceryList: MutableList<NutritionList> = mutableListOf()
-        var  ingredientList: ArrayList<String> = arrayListOf()
-        var list = GroceryListEntity("","","")
+        var list = GroceryListEntity("","",userName)
         var check = true
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_title, parent, false)
         val viewHolder = GroceryListHolder(view)
         view.groceryInfoBtn.setOnClickListener {
+            val groceryList: MutableList<NutritionList> = mutableListOf()
+            var  ingredientList: ArrayList<String> = arrayListOf()
             reset()
             val position = viewHolder.adapterPosition
             GlobalScope.launch {
-                list = groceryListControl.getGroceryList("")[position]
+                list = groceryListControl.getGroceryList(userName)[position]
                 val listType: Type = object : TypeToken<ArrayList<String>>() {}.type
                 ingredientList =
                     Gson().fromJson(
@@ -82,13 +85,27 @@ class GroceryListAdapter (private val groceryListControl: IGroceryListControl, p
             alert.show()
 
         }
+
+        view.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            check = true
+            GlobalScope.launch {
+                list = groceryListControl.getGroceryList(userName)[position]
+                check = false
+            }
+            while (check){
+                groceryListControl.showLoading(check)
+            }
+            groceryListControl.showLoading(check)
+            groceryListControl.launchListDetail(list.ingredient)
+        }
         return viewHolder
     }
 
     override fun onBindViewHolder(holder: GroceryListHolder, position: Int) {
         var title = ""
         GlobalScope.launch {
-            title = groceryListControl.getGroceryList("")[position].title
+            title = groceryListControl.getGroceryList(userName)[position].title
         }
         while (title == "") {
             groceryListControl.showLoading(true)
