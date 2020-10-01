@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +28,7 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
     private lateinit var groceryListRepo: GroceryListRepo
     private var userName: String? = ""
     private lateinit var sharedPref: SharedPreferences
+    private lateinit var showingList: GroceryListEntity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +72,11 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
         groceryListRepo.addGroceryList(groceryListEntity)
     }
 
+    override suspend fun updateList(groceryListEntity: GroceryListEntity) {
+        groceryListRepo = GroceryListRepo(this)
+        groceryListRepo.updateList(groceryListEntity)
+    }
+
     override fun showLoading(loading: Boolean) {
         if (loading)
             groceryListProgress.visibility = View.VISIBLE
@@ -77,10 +84,11 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
             groceryListProgress.visibility = View.GONE
     }
 
-    override fun launchListDetail(ingredients: String) {
+    override fun launchListDetail(ingredients: GroceryListEntity) {
+        showingList = ingredients
         val intent = Intent(this, ListDetailActivity::class.java)
-        intent.putExtra(LAUNCH_DETAIL_LIST, ingredients)
-        startActivity(intent)
+        intent.putExtra(LAUNCH_DETAIL_LIST, ingredients.ingredient)
+        startActivityForResult(intent, SHOWING)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -137,6 +145,35 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
 //                            todostemp.addTodo(todo)
 //                            recycle_fram.adapter?.notifyItemInserted(todostemp.getCount())
 
+                    }
+
+                    SHOWING -> {
+                        Toast.makeText(this, "we made it", Toast.LENGTH_LONG).show()
+                        showLoading(true)
+                        var loading = true
+                        val nutritionListString = data?.getStringExtra(ListDetailActivity.UPDATE_LIST)
+                        if (nutritionListString != null) {
+                            showingList.ingredient = nutritionListString
+                            GlobalScope.launch {
+                                groceryListRepo.updateList(showingList)
+                                loading = false
+                            }
+                        }
+                        while (loading) {
+                            showLoading(true)
+                        }
+                        showLoading(false)
+                        GlobalScope.launch {
+                            val count = getGroceryList(userName!!).size
+                            this@GroceryListActivity.runOnUiThread {
+                                groceryRecyclerView.layoutManager = LinearLayoutManager(this@GroceryListActivity)
+                                groceryRecyclerView.adapter = userName?.let {
+                                    GroceryListAdapter(this@GroceryListActivity, count,
+                                        it
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -202,5 +239,6 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
         const val USER = "USER"
         const val USERNAME = "USERNAME"
         const val DEFAULT_USER = "X!X"
+        const val SHOWING = 2
     }
 }

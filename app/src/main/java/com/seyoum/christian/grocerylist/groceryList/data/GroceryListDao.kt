@@ -14,5 +14,5 @@ interface GroceryListDao {
     fun delete(groceryListEntity: GroceryListEntity)
 
     @Update
-    fun updateItem(vararg groceryListEntity: GroceryListEntity)
+    fun updateList(vararg groceryListEntity: GroceryListEntity)
 }

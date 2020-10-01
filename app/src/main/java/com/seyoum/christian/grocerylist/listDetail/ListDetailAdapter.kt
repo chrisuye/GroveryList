@@ -6,11 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.seyoum.christian.grocerylist.R
+import com.seyoum.christian.grocerylist.groceryList.data.GroceryListEntity
 import com.seyoum.christian.grocerylist.ingredientList.network.model.NutritionList
+import com.seyoum.christian.grocerylist.listDetail.interfaces.IListDetailControl
 import kotlinx.android.synthetic.main.list_details.view.*
 
 class ListDetailAdapter(
-    private val list: MutableList<NutritionList>): RecyclerView.Adapter<ListDetailHolder>()  {
+    private val list: MutableList<NutritionList>,
+private val listDetailControl: IListDetailControl): RecyclerView.Adapter<ListDetailHolder>()  {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListDetailHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_details, parent, false)
         val viewHolder = ListDetailHolder(view)
@@ -32,11 +35,16 @@ class ListDetailAdapter(
 
             alert.show()
         }
+
+        view.checkIngredent.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            listDetailControl.updateChecked(position)
+        }
         return viewHolder
     }
 
     override fun onBindViewHolder(holder: ListDetailHolder, position: Int) {
-        list[position].name?.let { holder.bindItem(it) }
+        holder.bindItem(list[position])
     }
 
     override fun getItemCount(): Int {
@@ -57,8 +65,9 @@ class ListDetailAdapter(
 }
 
 class ListDetailHolder(view: View): RecyclerView.ViewHolder(view) {
-    fun bindItem(ingredient: String){
-        itemView.ingreienttext.text = ingredient
+    fun bindItem(ingredient: NutritionList){
+        itemView.ingreienttext.text = ingredient.name
+        itemView.checkIngredent.isChecked = ingredient.checked
     }
 
 }

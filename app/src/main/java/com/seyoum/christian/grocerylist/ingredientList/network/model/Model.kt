@@ -1,9 +1,9 @@
 package com.seyoum.christian.grocerylist.ingredientList.network.model
 
 
-class IngredientList(val next: String?, val results: List<NutritionList>)
+data class IngredientList(val next: String?, val results: List<NutritionList>)
 
-class NutritionList(
+data class NutritionList(
     val name: String?,
     val energy: String?,
     val protein: String?,
@@ -12,4 +12,5 @@ class NutritionList(
     val fat: String?,
     val fat_saturated: String?,
     val fibres: String?,
-    val sodium: String?)
+    val sodium: String?,
+    var checked: Boolean = false)

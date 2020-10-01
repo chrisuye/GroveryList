@@ -97,7 +97,7 @@ class GroceryListAdapter (
                 groceryListControl.showLoading(check)
             }
             groceryListControl.showLoading(check)
-            groceryListControl.launchListDetail(list.ingredient)
+            groceryListControl.launchListDetail(list)
         }
         return viewHolder
     }
