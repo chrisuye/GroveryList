@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -18,7 +19,6 @@ import java.lang.reflect.Type
 
 class GroceryListAdapter (
     private val groceryListControl: IGroceryListControl,
-    private val count: Int,
     private val userName: String): RecyclerView.Adapter<GroceryListHolder>(){
 
     private var energy  = 0.0
@@ -29,6 +29,7 @@ class GroceryListAdapter (
     private var fat_saturated  = 0.0
     private var fibres  = 0.0
     private var sodium  = 0.0
+    private var count = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroceryListHolder {
         var list = GroceryListEntity("","",userName)
@@ -99,6 +100,41 @@ class GroceryListAdapter (
             groceryListControl.showLoading(check)
             groceryListControl.launchListDetail(list)
         }
+
+        view.setOnLongClickListener {
+            view.setBackgroundColor(parent.resources.getColor(R.color.red))
+            val position = viewHolder.adapterPosition
+            check = true
+            GlobalScope.launch {
+                list = groceryListControl.getGroceryList(userName)[position]
+                check = false
+            }
+            while (check){
+                groceryListControl.showLoading(check)
+            }
+            groceryListControl.showLoading(check)
+
+            val dialogBuilder = AlertDialog.Builder(view.context)
+            dialogBuilder
+                .setCancelable(false)
+                .setMessage("Are you sure?")
+                .setPositiveButton("Yes") { _, _ ->
+                    groceryListControl.deleteGroceryList(list, position)
+                }
+
+                .setNegativeButton("No") { dialog, _ ->
+                    view.setBackgroundColor(parent.resources.getColor(R.color.white))
+                    dialog.cancel()
+                }
+
+
+            val alert = dialogBuilder.create()
+
+            alert.setTitle("Delete ${list.title}")
+
+            alert.show()
+            return@setOnLongClickListener true
+        }
         return viewHolder
     }
 
@@ -115,6 +151,16 @@ class GroceryListAdapter (
     }
 
     override fun getItemCount(): Int {
+        var check = true
+        groceryListControl.showLoading(check)
+        GlobalScope.launch {
+            count = groceryListControl.getGroceryList(userName).size
+            check = false
+        }
+        while (check){
+            groceryListControl.showLoading(check)
+        }
+        groceryListControl.showLoading(check)
         return count
     }
 

@@ -20,4 +20,8 @@ class GroceryListRepo (context: Context): IGroceryListRepo {
         db.groceryListDao().updateList(groceryListEntity)
     }
 
+    override suspend fun deleteGroceryList(groceryListEntity: GroceryListEntity) {
+        db.groceryListDao().delete(groceryListEntity)
+    }
+
 }

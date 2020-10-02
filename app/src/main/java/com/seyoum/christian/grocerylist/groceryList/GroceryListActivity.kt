@@ -46,11 +46,10 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
         }
         GlobalScope.launch {
             if (userName != null) {
-                val count = getGroceryList(userName!!).size
                 this@GroceryListActivity.runOnUiThread {
                     groceryRecyclerView.layoutManager = LinearLayoutManager(this@GroceryListActivity)
                     groceryRecyclerView.adapter =
-                        GroceryListAdapter(this@GroceryListActivity, count, userName!!)
+                        GroceryListAdapter(this@GroceryListActivity, userName!!)
                 }
             }
         }
@@ -91,6 +90,20 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
         startActivityForResult(intent, SHOWING)
     }
 
+    override fun deleteGroceryList(groceryListEntity: GroceryListEntity, position: Int) {
+        var deleting = true
+        showLoading(deleting)
+        GlobalScope.launch {
+            groceryListRepo.deleteGroceryList(groceryListEntity)
+            deleting = false
+        }
+        while (deleting){
+            showLoading(deleting)
+        }
+        showLoading(deleting)
+        groceryRecyclerView.adapter?.notifyItemRemoved(position)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -119,11 +132,10 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
                         }
                         showLoading(false)
                         GlobalScope.launch {
-                            val count = getGroceryList(userName!!).size
                             this@GroceryListActivity.runOnUiThread {
                                 groceryRecyclerView.layoutManager = LinearLayoutManager(this@GroceryListActivity)
                                 groceryRecyclerView.adapter = userName?.let {
-                                    GroceryListAdapter(this@GroceryListActivity, count,
+                                    GroceryListAdapter(this@GroceryListActivity,
                                         it
                                     )
                                 }
@@ -164,11 +176,10 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
                         }
                         showLoading(false)
                         GlobalScope.launch {
-                            val count = getGroceryList(userName!!).size
                             this@GroceryListActivity.runOnUiThread {
                                 groceryRecyclerView.layoutManager = LinearLayoutManager(this@GroceryListActivity)
                                 groceryRecyclerView.adapter = userName?.let {
-                                    GroceryListAdapter(this@GroceryListActivity, count,
+                                    GroceryListAdapter(this@GroceryListActivity,
                                         it
                                     )
                                 }
