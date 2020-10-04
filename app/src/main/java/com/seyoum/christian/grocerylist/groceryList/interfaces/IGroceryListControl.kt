@@ -9,4 +9,5 @@ interface IGroceryListControl {
     fun deleteGroceryList(groceryListEntity: GroceryListEntity, position: Int)
     fun showLoading(loading: Boolean)
     fun launchListDetail(ingredients: GroceryListEntity)
+    fun search(newText: String)
 }

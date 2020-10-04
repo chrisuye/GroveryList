@@ -38,11 +38,6 @@ class IngredientListRepo: IIngredientListRepo{
                 ingredientList.add(ingredient)
             }
         }
-
-//        if (ingredientList.isNullOrEmpty() && !next.isNullOrEmpty()) {
-//            next?.let { fetchMore(it) }
-//            Toast.makeText(this, "Loading more...", Toast.LENGTH_LONG).show()
-//        }
     }
 
     override fun reset() {

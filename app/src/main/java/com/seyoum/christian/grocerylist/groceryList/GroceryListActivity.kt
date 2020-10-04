@@ -62,17 +62,17 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
     }
 
     override suspend fun getGroceryList(userName: String): List<GroceryListEntity> {
-        groceryListRepo = GroceryListRepo(this)
+        groceryListRepo = GroceryListRepo(this, userName)
         return groceryListRepo.getGroceryList(userName)
     }
 
     override suspend fun addGroceryList(groceryListEntity: GroceryListEntity) {
-        groceryListRepo = GroceryListRepo(this)
+        groceryListRepo = userName?.let { GroceryListRepo(this, it) }!!
         groceryListRepo.addGroceryList(groceryListEntity)
     }
 
     override suspend fun updateList(groceryListEntity: GroceryListEntity) {
-        groceryListRepo = GroceryListRepo(this)
+        groceryListRepo = userName?.let { GroceryListRepo(this, it) }!!
         groceryListRepo.updateList(groceryListEntity)
     }
 
@@ -88,6 +88,10 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
         val intent = Intent(this, ListDetailActivity::class.java)
         intent.putExtra(LAUNCH_DETAIL_LIST, ingredients.ingredient)
         startActivityForResult(intent, SHOWING)
+    }
+
+    override fun search(newText: String) {
+        groceryListRepo.search(newText)
     }
 
     override fun deleteGroceryList(groceryListEntity: GroceryListEntity, position: Int) {
@@ -141,21 +145,6 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
                                 }
                             }
                         }
-//                        val listType: Type = object : TypeToken<ArrayList<String>>() {}.type
-//                        val ingredientList: ArrayList<String> = Gson().fromJson(ingredientListString, listType)
-//                        val title = data?.getStringExtra(IngredientListActivity.ADD_TITLE_EXTRA_KEY)
-//                        for (ingredient in ingredientList) {
-//                            val groceryList = Gson().fromJson(
-//                                ingredient,
-//                                NutritionList::class.java
-//                            )
-//                            println(groceryList)
-//                        }
-//                        println(title)
-//                        println(ingredientList)
-
-//                            todostemp.addTodo(todo)
-//                            recycle_fram.adapter?.notifyItemInserted(todostemp.getCount())
 
                     }
 
@@ -213,10 +202,26 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
             }
             override fun onQueryTextChange(newText: String?): Boolean {
 
-//                if (newText!!.isNotEmpty()){
-//                }
-//                else{
-//                }
+                if (newText!!.isNotEmpty()){
+                    search(newText)
+                    Toast.makeText(this@GroceryListActivity,"searching", Toast.LENGTH_LONG).show()
+                    groceryRecyclerView.layoutManager = LinearLayoutManager(this@GroceryListActivity)
+                    groceryRecyclerView.adapter = userName?.let {
+                        GroceryListAdapter(this@GroceryListActivity,
+                            it
+                        )
+                    }
+                }
+                else{
+                    search(newText)
+                    Toast.makeText(this@GroceryListActivity,"not searching", Toast.LENGTH_LONG).show()
+                    groceryRecyclerView.layoutManager = LinearLayoutManager(this@GroceryListActivity)
+                    groceryRecyclerView.adapter = userName?.let {
+                        GroceryListAdapter(this@GroceryListActivity,
+                            it
+                        )
+                    }
+                }
                 return true
             }
         })

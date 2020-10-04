@@ -67,18 +67,25 @@ class CreateAccountFragment(val userControl: IUserControl) : Fragment() {
                 email.text.toString(),
                 password.text.toString()
             )
-            GlobalScope.launch {
-                if (userControl.checkUser(userName.text.toString())) {
-                    userControl.addUser(userEntity)
-                    val intent = Intent(activity, GroceryListActivity::class.java)
-                    intent.putExtra(GroceryListActivity.USER, userName.text.toString())
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                } else {
-                    activity?.runOnUiThread {
-                        Toast.makeText(activity, "username already exists", Toast.LENGTH_LONG).show()
+            if (userControl.checkValid(userEntity)) {
+                GlobalScope.launch {
+                    if (userControl.checkUser(userName.text.toString())) {
+                        userControl.addUser(userEntity)
+                        val intent = Intent(activity, GroceryListActivity::class.java)
+                        intent.putExtra(GroceryListActivity.USER, userName.text.toString())
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                    } else {
+                        activity?.runOnUiThread {
+                            Toast.makeText(activity, "Username already exists", Toast.LENGTH_LONG)
+                                .show()
+                        }
                     }
                 }
+            } else {
+                Toast.makeText(activity, "Invalid input", Toast.LENGTH_LONG)
+                    .show()
             }
 
 

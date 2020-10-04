@@ -7,4 +7,5 @@ interface IGroceryListRepo {
     suspend fun addGroceryList(groceryListEntity: GroceryListEntity)
     suspend fun updateList(groceryListEntity: GroceryListEntity)
     suspend fun deleteGroceryList(groceryListEntity: GroceryListEntity)
+    fun search(newText: String)
 }

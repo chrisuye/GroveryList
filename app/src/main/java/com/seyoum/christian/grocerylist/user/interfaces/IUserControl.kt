@@ -6,4 +6,5 @@ interface IUserControl {
     suspend fun getUser(userName:String, password: String): Boolean
     suspend fun addUser(userEntity: UserEntity)
     suspend fun checkUser(userName: String): Boolean
+    fun checkValid(userEntity: UserEntity): Boolean
 }

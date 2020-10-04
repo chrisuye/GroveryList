@@ -2,7 +2,6 @@ package com.seyoum.christian.grocerylist
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.seyoum.christian.grocerylist.groceryList.GroceryListActivity
 import com.seyoum.christian.grocerylist.user.CreateAccountFragment
@@ -23,9 +22,9 @@ class MainActivity : AppCompatActivity(), IUserControl {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val sharedPref = getSharedPreferences(GroceryListActivity.USER, MODE_MULTI_PROCESS)
-        val userName = sharedPref.getString(GroceryListActivity.USERNAME, "X!X")
+        val userName = sharedPref.getString(GroceryListActivity.USERNAME, GroceryListActivity.DEFAULT_USER)
 
-        if (userName != "X!X") {
+        if (userName != GroceryListActivity.DEFAULT_USER) {
             val intent = Intent(this, GroceryListActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -61,6 +60,19 @@ class MainActivity : AppCompatActivity(), IUserControl {
     override suspend fun checkUser(userName: String): Boolean {
         userRepo = UserRepo(this)
         return userRepo.checkUser(userName)
+    }
+
+    override fun checkValid(userEntity: UserEntity): Boolean {
+        if (userEntity.userName == GroceryListActivity.DEFAULT_USER ||
+                userEntity.userName.isBlank() ||
+                userEntity.firstName.isBlank() ||
+                userEntity.lastName.isBlank() ||
+                userEntity.email.isBlank() ||
+                userEntity.password.isBlank() ||
+                !userEntity.email.contains("@")) {
+            return false
+        }
+        return true
     }
 
     override fun onBackPressed() {
