@@ -123,7 +123,7 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
                         if (title != null && ingredientListString != null) {
                             GlobalScope.launch {
                                 userName?.let {
-                                    GroceryListEntity(title, ingredientListString,
+                                    GroceryListEntity(0, title, ingredientListString,
                                         it
                                     )
                                 }?.let { addGroceryList(it) }
@@ -149,7 +149,6 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
                     }
 
                     SHOWING -> {
-                        Toast.makeText(this, "we made it", Toast.LENGTH_LONG).show()
                         showLoading(true)
                         var loading = true
                         val nutritionListString = data?.getStringExtra(ListDetailActivity.UPDATE_LIST)
@@ -186,45 +185,6 @@ class GroceryListActivity : AppCompatActivity(), IGroceryListControl {
 
         val inflater = menuInflater
         inflater.inflate(R.menu.grocery_search_logout_menu, menu)
-
-        val manager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        val searchItem = menu?.findItem(R.id.grocerySearch)
-        val searchView = searchItem?.actionView as SearchView
-
-        searchView.setSearchableInfo(manager.getSearchableInfo(componentName))
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                searchView.clearFocus()
-                searchView.setQuery("",false)
-                searchItem.collapseActionView()
-                return true
-            }
-            override fun onQueryTextChange(newText: String?): Boolean {
-
-                if (newText!!.isNotEmpty()){
-                    search(newText)
-                    Toast.makeText(this@GroceryListActivity,"searching", Toast.LENGTH_LONG).show()
-                    groceryRecyclerView.layoutManager = LinearLayoutManager(this@GroceryListActivity)
-                    groceryRecyclerView.adapter = userName?.let {
-                        GroceryListAdapter(this@GroceryListActivity,
-                            it
-                        )
-                    }
-                }
-                else{
-                    search(newText)
-                    Toast.makeText(this@GroceryListActivity,"not searching", Toast.LENGTH_LONG).show()
-                    groceryRecyclerView.layoutManager = LinearLayoutManager(this@GroceryListActivity)
-                    groceryRecyclerView.adapter = userName?.let {
-                        GroceryListAdapter(this@GroceryListActivity,
-                            it
-                        )
-                    }
-                }
-                return true
-            }
-        })
 
         return true
     }

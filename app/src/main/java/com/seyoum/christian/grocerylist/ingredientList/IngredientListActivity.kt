@@ -31,6 +31,7 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
     private var next: String? = ""
     private val ingredientListRepo = IngredientListRepo()
     private lateinit var title: EditText
+    private var isSearching = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,7 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
-                if (!ingredientListRecycleView.canScrollVertically(1)) {
+                if (!ingredientListRecycleView.canScrollVertically(1) && !isSearching) {
                     if (next != null) {
                         runOnUiThread {
                             Toast.makeText(this@IngredientListActivity, "Loading...", Toast.LENGTH_LONG).show()
@@ -157,19 +158,16 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
                 searchView.clearFocus()
                 searchView.setQuery("", false)
                 item.collapseActionView()
-                Toast.makeText(
-                    this@IngredientListActivity,
-                    "looking for $query",
-                    Toast.LENGTH_SHORT
-                ).show()
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText!!.isNotEmpty()) {
+                    isSearching = true
                     search(newText)
                     ingredientListRecycleView.adapter?.notifyDataSetChanged()
                 } else {
+                    isSearching = false
                     reset()
                     ingredientListRecycleView.adapter?.notifyDataSetChanged()
                 }
@@ -239,23 +237,4 @@ class IngredientListActivity : AppCompatActivity(), IIngredientListControl {
         const val ADD_LIST_EXTRA_KEY = "ADD_LIST"
         const val ADD_TITLE_EXTRA_KEY = "ADD_TiTLE"
     }
-
-//    private fun search(search: String) {
-//        ingredients.clear()
-//        for (ingredient in fullIngredient) {
-//            if (ingredient.nutritionList.name?.toLowerCase()?.contains(search.toLowerCase())!!) {
-//                ingredients.add(ingredient)
-//            }
-//        }
-//
-//        if (ingredients.isNullOrEmpty() && !next.isNullOrEmpty()) {
-//            next?.let { fetchMore(it) }
-//            Toast.makeText(this, "Loading more...", Toast.LENGTH_LONG).show()
-//        }
-//    }
-//
-//    private fun reset() {
-//        ingredients.clear()
-//        ingredients.addAll(fullIngredient)
-//    }
 }

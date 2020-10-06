@@ -2,13 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/grocerySearch"
-        android:title="@string/search"
-        app:showAsAction="always|collapseActionView"
-        android:icon="@drawable/ic_baseline_search_24"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
-
     <item android:id="@+id/logout"
         android:title="@string/log_out"
         app:showAsAction="never"/>

@@ -32,11 +32,11 @@ class GroceryListAdapter (
     private var count = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroceryListHolder {
-        var list = GroceryListEntity("","",userName)
-        var check = true
+        var list = GroceryListEntity(0, "","",userName)
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_title, parent, false)
         val viewHolder = GroceryListHolder(view)
         view.groceryInfoBtn.setOnClickListener {
+            var check = true
             val groceryList: MutableList<NutritionList> = mutableListOf()
             var  ingredientList: ArrayList<String> = arrayListOf()
             reset()
@@ -89,7 +89,7 @@ class GroceryListAdapter (
 
         view.setOnClickListener {
             val position = viewHolder.adapterPosition
-            check = true
+            var check = true
             GlobalScope.launch {
                 list = groceryListControl.getGroceryList(userName)[position]
                 check = false
@@ -104,7 +104,7 @@ class GroceryListAdapter (
         view.setOnLongClickListener {
             view.setBackgroundColor(parent.resources.getColor(R.color.red))
             val position = viewHolder.adapterPosition
-            check = true
+            var check = true
             GlobalScope.launch {
                 list = groceryListControl.getGroceryList(userName)[position]
                 check = false

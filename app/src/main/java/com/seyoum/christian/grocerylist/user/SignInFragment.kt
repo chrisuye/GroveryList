@@ -67,10 +67,6 @@ class SignInFragment(val userControl: IUserControl) : Fragment() {
             password = view.findViewById(R.id.passwordIn)
             GlobalScope.launch {
                 if (userControl.getUser(userName.text.toString(), password.text.toString())) {
-//                    val fm: FragmentManager = activity!!.supportFragmentManager
-//                    for (i in 0 until fm.backStackEntryCount) {
-//                        fm.popBackStack()
-//                    }
                     val intent = Intent(activity, GroceryListActivity::class.java)
                     intent.putExtra(GroceryListActivity.USER, userName.text.toString())
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

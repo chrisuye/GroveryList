@@ -6,7 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class GroceryListEntity(
-    @PrimaryKey var title: String,
+    @PrimaryKey(autoGenerate = true) var index: Int,
+    @ColumnInfo(name = "title") var title: String,
     @ColumnInfo(name = "ingredient") var ingredient: String,
     @ColumnInfo(name = "userName") var userName: String
 )
